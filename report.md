@@ -20,43 +20,9 @@ I think the core pain is not just that the process is slow, but that it requires
 
 ### System Map
 
-The diagram below shows the tools, data flows, and pain points in the current return workflow. Nodes shaded in red indicate the steps Maason identified as slow or error prone.
+The diagram below shows the tools, data flows, and pain points in the current return workflow. Steps circled in red dashed borders are the pain points Maason identified.
 
-```mermaid
-flowchart TD
-    subgraph Purchase Phase
-        PO[Amazon Purchase Order]
-    end
-
-    subgraph Return Day
-        TEAMS[Student Teams]
-        CHECKLIST[Return Checklist Spreadsheet]
-        TABLE[Return Table — 3rd Floor]
-        BTCO[BlueTally Individual Checkouts]
-        CAT[Categorize: IT or Makerspace or Discard]
-        BARCODES[Barcode Sticker Roll\nPre-generated UW 8-digit IDs]
-    end
-
-    subgraph Inventory System
-        BT[BlueTally Asset Tracker]
-    end
-
-    PO -->|Item list for return| CHECKLIST
-    TEAMS -->|Arrive with purchased items| TABLE
-    CHECKLIST -->|Verify each item one by one| TABLE
-    BTCO -->|Also check in borrowed items| TABLE
-    TABLE -->|All team items verified| CAT
-    CAT -->|IT or Makerspace| BARCODES
-    CAT -->|Discard| TRASH[Disposed]
-    BARCODES -->|Sticker applied then manual data entry| BT
-
-    style TABLE fill:#ffcccc,stroke:#cc0000
-    style CAT fill:#ffcccc,stroke:#cc0000
-    style BT fill:#ffe0b2,stroke:#e65100
-    style BARCODES fill:#ffe0b2,stroke:#e65100
-```
-
-Red nodes are pain points. The return table step is slow because each item is verified verbally one by one. The categorization step requires both Maason and Kevin to make a judgment call together, which adds time. The BlueTally entry step is tedious because item names must be cleaned up manually before entry, and barcodes must be assigned on the spot rather than at purchase time.
+![System Map](assets/system-map.png)
 
 ---
 
