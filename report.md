@@ -41,7 +41,7 @@ The first touchpoint signals that the app needs to support a fast check-in flow 
 
 ### Build Mandate
 
-Based on the interview, I will build a web app for tracking returned equipment items and their status because the interviewee said the return process requires going through each item one by one from a spreadsheet and then manually re-entering everything into BlueTally, which means the app needs to centralize item check-in, capture the asset tag, and let Maason assign a category so the data can be exported as a clean CSV ready for BlueTally import.
+> "Based on the interview, I will build an equipment return tracker because Maason said going through every item one by one and re-entering it all into BlueTally takes too long, which means the app needs to speed up the check-in step and output data in a format ready for BlueTally import."
 
 ---
 
