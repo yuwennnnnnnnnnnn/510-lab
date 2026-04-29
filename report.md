@@ -35,9 +35,6 @@ I chose Next.js with Supabase because the return workflow involves more then one
 
 ### Supabase Schema Report 
 
-One table was created in Supabase with RLS disabled for Component B.
-
-**items** — tracks each piece of equipment being returned
 
 | Column | Type | Default | Nullable |
 |--------|------|---------|----------|
@@ -65,6 +62,12 @@ I tested the app at iPhone 14 Pro width using Chrome DevTools.
 
 The most critical issue was the items table overflowing at phone width. I fixed it by wrapping the table in a div with `overflow-x-auto`, which allows horizontal scrolling instead of clipping the content.
 
+### Security Checklist
+
+- [x] No hardcoded secrets in source files — Supabase URL and anon key are stored in `.env.local` only
+- [x] `.env.local` is listed in `.gitignore` — confirmed not tracked by git
+- [x] Error handling on every API call and database operation — all fetch calls use try/catch with user-visible error messages; all Supabase queries check for `error` before using `data`
+
 ### Deployment URL
 
 _To be added after Vercel deployment._
@@ -73,7 +76,54 @@ _To be added after Vercel deployment._
 
 ## Component C: System Architecture and Design
 
-_To be completed._
+### Architecture Diagram
+
+```mermaid
+flowchart LR
+    EXT["Open-Meteo API\n(External)"]
+
+    subgraph T1["Tier 1 — Browser (Client)"]
+        PAGE["dashboard/page.tsx\nuse client — manages state"]
+        WC["WeatherCard\ndisplays forecast"]
+        IF["ItemForm\ncontrolled form inputs"]
+        IL["ItemList\nstatus + delete actions"]
+    end
+
+    subgraph T2["Tier 2 — Application Server (Next.js API Routes)"]
+        WR["/api/weather\nproxies Open-Meteo"]
+        IR["/api/items\nGET POST PATCH DELETE"]
+    end
+
+    subgraph T3["Tier 3 — Database (Supabase / PostgreSQL)"]
+        DB["items table\nid, item_name, team_name,\ncategory, status, asset_tag"]
+    end
+
+    EXT -->|"JSON — daily temps and precipitation"| WR
+    WR -->|"HTTP GET — forecast params"| EXT
+    PAGE -->|"HTTP GET /api/weather"| WR
+    PAGE -->|"HTTP GET /api/items"| IR
+    PAGE -->|"HTTP POST /api/items — new item JSON"| IR
+    PAGE -->|"HTTP PATCH /api/items — status update JSON"| IR
+    PAGE -->|"HTTP DELETE /api/items?id"| IR
+    WR -->|"JSON — shaped WeatherData"| PAGE
+    IR -->|"JSON — Item array or single row"| PAGE
+    IR -->|"SQL SELECT INSERT UPDATE DELETE"| DB
+    DB -->|"Query results — rows"| IR
+
+    PAGE --> WC
+    PAGE --> IF
+    PAGE --> IL
+```
+
+### Design Decision Log
+
+| Field | Entry |
+|-------|-------|
+| Decision | I used a single `status` text column with three values (pending, returned, labeled) to track each item through the return workflow instead of using separate boolean columns or a separate status table. |
+| Alternatives considered | Three separate boolean columns (`is_returned`, `is_labeled`, `is_discarded`), or a separate status history table that logs every transition with a timestamp. |
+| Why I chose this | The return workflow is strictly linear — an item always goes pending then returned then labeled, never skips a step or goes backward. A single ordered status column matches that reality and keeps queries simple. |
+| Trade-off | I gave up a full audit trail. If Maason wants to know when exactly an item was marked returned, there is no timestamp for that transition. A status history table would capture that but adds complexity that is not needed for this use case. |
+| When would I choose differently | If the workflow allowed items to go backward (e.g., an item marked returned could be sent back to pending after a dispute), a status history table would be the right choice. |
 
 ---
 
