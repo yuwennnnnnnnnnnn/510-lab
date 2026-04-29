@@ -111,6 +111,8 @@ flowchart TD
 
 ### Design Decision Log
 
+> Pick one architecture decision inside your chosen stack and justify it. I chose schema design: why did I choose this table structure for the workflow?
+
 | Field | Entry |
 |-------|-------|
 | Decision | I used a single `status` text column with three values (pending, returned, labeled) to track each item through the return workflow instead of using separate boolean columns or a separate status table. |
