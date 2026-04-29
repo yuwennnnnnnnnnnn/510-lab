@@ -82,7 +82,8 @@ https://510-lab.vercel.app
 
 ### Design Decision Log
 
-> Pick one architecture decision inside your chosen stack and justify it. I chose schema design: why did I choose this table structure for the workflow?
+#### This Week's Decision Prompt
+> Why did you choose this table structure (fields/relationships) for the workflow?
 
 | Field | Entry |
 |-------|-------|
