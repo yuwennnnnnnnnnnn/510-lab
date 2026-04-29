@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GIX Return Tracker",
-  description: "Equipment checkout return workflow for GIX IT",
+  title: "GIX Apps",
+  description: "GIX equipment return tracker and events browser",
 };
 
 export default function RootLayout({
@@ -29,8 +28,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-uw-purple-light">
-        <Navbar />
-        <main className="flex-1">{children}</main>
+        {children}
       </body>
     </html>
   );
