@@ -155,6 +155,8 @@ if (!Array.isArray(data)) {
 
 Live at: https://510-lab.vercel.app/events
 
+![Component E Screenshot](assets/component-e-screenshot.png)
+
 ### System Architecture Map
 
 ![Component E Architecture](assets/component-e-architecture.png)
