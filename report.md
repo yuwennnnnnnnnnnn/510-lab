@@ -155,9 +155,12 @@ if (!Array.isArray(data)) {
 
 ### What Was Built
 
-A browsable events page at `/events` that reads from the `events` Supabase table and lets staff filter by category. The page is built with Next.js App Router and fetches data through a server-side API route (`/api/events`) so the Supabase key is never exposed to the browser.
+A standalone events browser at `https://510-lab.vercel.app/events` — a separate app from the Component B equipment return tracker (`https://510-lab.vercel.app/dashboard`). The two apps share the same Next.js repo but have independent layouts and no shared navigation. The events app reads from the `events` Supabase table, displays events in a card grid, and lets users filter by category. Data is fetched through a server-side API route (`/api/events`) so the Supabase key is never exposed to the browser.
 
-Live at: https://510-lab.vercel.app/events
+| App | URL | Purpose |
+|-----|-----|---------|
+| Component B | https://510-lab.vercel.app/dashboard | Equipment return tracker for GIX IT staff |
+| Component E | https://510-lab.vercel.app/events | GIX events browser with category filter |
 
 ### System Architecture Map
 
