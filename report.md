@@ -205,45 +205,45 @@ for (const event of data) {
 
 ## AI Usage Log
 
-**Interaction 1: Building the Supabase items API route**
+**Prompt 1:**
 
-**What you prompted:** Build a Next.js API route that connects to Supabase and supports GET, POST, PATCH, and DELETE for an items table with fields item_name, team_name, category, status, asset_tag, and description.
+> "Build a Next.js API route that connects to Supabase and supports GET, POST, PATCH, and DELETE for an items table with fields item_name, team_name, category, status, asset_tag, and description."
 
-**What it produced:** A complete `/api/items/route.ts` with all four HTTP methods, error handling on every Supabase call, and input validation for required fields on POST.
+**What it produced:** A full `/api/items/route.ts` came back on the first try with all four HTTP methods, try/catch on every Supabase call, and required field validation on POST. The structure was solid and I did not have to rewrite anything major.
 
-**AI assumption:** The AI assumed status values would always be valid strings and did not add validation for the allowed status transitions, so a client could PATCH an item directly to "labeled" without going through "returned" first.
+**AI assumption:** It assumed any status string was valid and did not enforce the order that items must go pending then returned then labeled. I never said the workflow was linear so it had no reason to know.
 
-**Failure mode:** An item could reach the "labeled" state without an asset tag ever being entered, because the API did not enforce the pending → returned → labeled order.
+**Failure mode:** A client could PATCH an item straight to "labeled" without entering an asset tag, which would have broken the whole point of the labeling step.
 
-**What you would change:** Specify the allowed status transitions in the prompt so the API enforces the workflow order rather than accepting any status string.
-
----
-
-**Interaction 2: Adding QR code display for labeled items**
-
-**What you prompted:** When an item's status is labeled, show a QR code image next to the asset tag in the items table.
-
-**What it produced:** An `<img>` tag in ItemList.tsx with a `src` pointing directly to the external QR Server API from the browser.
-
-**AI assumption:** The AI assumed any image request could go directly from the browser to an external service, without considering that the 3-tier architecture requires all external API calls to go through the application server.
-
-**Failure mode:** The browser was calling an external API directly, bypassing Tier 2 entirely and violating the architecture requirement that external services connect only at the server layer.
-
-**What you would change:** Include the constraint in the prompt that all external API calls must route through a Next.js server-side route so the AI does not place them in the frontend.
+**What I would change:** I would add one line to the prompt describing the allowed transitions so the API rejects out-of-order status updates from the start.
 
 ---
 
-**Interaction 3: Building the events page with category filter**
+**Prompt 2:**
 
-**What you prompted:** Build a browsable events page that reads from a Supabase events table and shows a category filter for lecture, workshop, career, and social.
+> "When an item's status is labeled, show a QR code image next to the asset tag in the items table."
 
-**What it produced:** An `events/page.tsx` with a CategoryFilter component and EventCard grid, a `/api/events` route with optional category query param, and an Events link added to the shared navbar.
+**What it produced:** An `<img>` tag in ItemList.tsx pointing directly to the external QR Server API from the browser. It worked visually right away, which is why I did not catch it immediately.
 
-**AI assumption:** The AI assumed the events page should share the same layout and navigation as the equipment return tracker, since both apps live in the same Next.js project.
+**AI assumption:** It assumed any image request could go straight from the browser to an external service. I never mentioned the 3-tier architecture rule that all external API calls have to go through the server, so it had no reason to route it differently.
 
-**Failure mode:** The two apps appeared as one integrated product rather than two separate deliverables, which did not match the lab requirement for Component E to be an independent app.
+**Failure mode:** The browser was bypassing Tier 2 entirely and calling an external API directly, which violated the architecture requirement.
 
-**What you would change:** Specify in the prompt that the events app must have its own independent layout and no shared navigation with Component B, so the AI does not treat them as one app from the start.
+**What I would change:** I would include the constraint upfront: all external API calls must go through a Next.js server-side route, not the browser.
+
+---
+
+**Prompt 3:**
+
+> "Build a browsable events page that reads from a Supabase events table and shows a category filter for lecture, workshop, career, and social."
+
+**What it produced:** A working `events/page.tsx` with a CategoryFilter, an EventCard grid, a `/api/events` route with an optional category query param, and an Events link dropped into the shared navbar alongside the dashboard.
+
+**AI assumption:** It assumed the events page was just another section of the same app and added it to the existing navigation without asking. Since both live in the same Next.js project, that seemed like the obvious move.
+
+**Failure mode:** The two apps looked like one integrated product, which did not match the lab requirement for Component E to be a standalone deliverable separate from Component B.
+
+**What I would change:** I would say in the prompt that this app needs its own independent layout and header with no shared navigation, so the AI does not connect them from the start.
 
 ---
 
