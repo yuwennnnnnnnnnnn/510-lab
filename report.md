@@ -62,15 +62,15 @@ I tested the app at iPhone 14 Pro width using Chrome DevTools.
 
 The most critical issue was the items table overflowing at phone width. I fixed it by wrapping the table in a div with `overflow-x-auto`, which allows horizontal scrolling instead of clipping the content.
 
+### Deployment URL
+
+_To be added after Vercel deployment._
+
 ### Security Checklist
 
 - [x] No hardcoded secrets in source files — Supabase URL and anon key are stored in `.env.local` only
 - [x] `.env.local` is listed in `.gitignore` — confirmed not tracked by git
 - [x] Error handling on every API call and database operation — all fetch calls use try/catch with user-visible error messages; all Supabase queries check for `error` before using `data`
-
-### Deployment URL
-
-_To be added after Vercel deployment._
 
 ---
 
@@ -79,40 +79,26 @@ _To be added after Vercel deployment._
 ### Architecture Diagram
 
 ```mermaid
-flowchart LR
-    EXT["Open-Meteo API\n(External)"]
+flowchart TD
+    EXT(["Open-Meteo API\nexternal · no auth required"])
 
     subgraph T1["Tier 1 — Browser (Client)"]
-        PAGE["dashboard/page.tsx\nuse client — manages state"]
-        WC["WeatherCard\ndisplays forecast"]
-        IF["ItemForm\ncontrolled form inputs"]
-        IL["ItemList\nstatus + delete actions"]
+        PAGE["dashboard/page.tsx\nWeatherCard · ItemForm · ItemList"]
     end
 
     subgraph T2["Tier 2 — Application Server (Next.js API Routes)"]
-        WR["/api/weather\nproxies Open-Meteo"]
-        IR["/api/items\nGET POST PATCH DELETE"]
+        WR["/api/weather\nOpen-Meteo proxy"]
+        IR["/api/items\nGET · POST · PATCH · DELETE"]
     end
 
-    subgraph T3["Tier 3 — Database (Supabase / PostgreSQL)"]
-        DB["items table\nid, item_name, team_name,\ncategory, status, asset_tag"]
+    subgraph T3["Tier 3 — Database (Supabase · PostgreSQL)"]
+        DB[("items table")]
     end
 
-    EXT -->|"JSON — daily temps and precipitation"| WR
-    WR -->|"HTTP GET — forecast params"| EXT
-    PAGE -->|"HTTP GET /api/weather"| WR
-    PAGE -->|"HTTP GET /api/items"| IR
-    PAGE -->|"HTTP POST /api/items — new item JSON"| IR
-    PAGE -->|"HTTP PATCH /api/items — status update JSON"| IR
-    PAGE -->|"HTTP DELETE /api/items?id"| IR
-    WR -->|"JSON — shaped WeatherData"| PAGE
-    IR -->|"JSON — Item array or single row"| PAGE
-    IR -->|"SQL SELECT INSERT UPDATE DELETE"| DB
-    DB -->|"Query results — rows"| IR
-
-    PAGE --> WC
-    PAGE --> IF
-    PAGE --> IL
+    PAGE <-->|"HTTP requests · JSON responses"| WR
+    PAGE <-->|"HTTP requests · JSON responses"| IR
+    WR <-->|"HTTP GET · JSON forecast"| EXT
+    IR <-->|"SQL queries · row results"| DB
 ```
 
 ### Design Decision Log
