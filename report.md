@@ -16,9 +16,7 @@ I think the core pain is not just that the process is slow, but that it requires
 
 ---
 
-### System Map
-
-The diagram below shows the tools, data flows, and pain points in the current return workflow. Steps circled in red dashed borders are the pain points Maason identified.
+### System Map Sketch
 
 ![System Map](assets/system-map.png)
 
