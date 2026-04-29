@@ -81,7 +81,13 @@ _To be added after Vercel deployment._
 ```mermaid
 flowchart TD
     subgraph T1["Tier 1 — Browser (Client)"]
-        PAGE["dashboard/page.tsx\nWeatherCard · ItemForm · ItemList"]
+        PAGE["dashboard/page.tsx\nfetches data · manages state"]
+        WC["WeatherCard\ndisplays forecast (props only)"]
+        IF["ItemForm\nsubmits new item"]
+        IL["ItemList\nupdates status · shows QR code"]
+        PAGE -->|"WeatherData props"| WC
+        PAGE -->|"Item array props + onRefresh"| IL
+        PAGE -->|"onAdded callback"| IF
     end
 
     subgraph T2["Tier 2 — Application Server (Next.js API Routes)"]
@@ -98,11 +104,15 @@ flowchart TD
     EXT2(["QR Server API\nexternal · no auth"])
 
     PAGE -->|"HTTP GET /api/weather"| WR
-    PAGE -->|"HTTP GET /api/qrcode?data=tag"| QR
-    PAGE -->|"HTTP GET · POST · PATCH · DELETE /api/items"| IR
     WR -->|"JSON — WeatherData"| PAGE
-    QR -->|"PNG — QR code image"| PAGE
-    IR -->|"JSON — Item array or single row"| PAGE
+    PAGE -->|"HTTP GET /api/items"| IR
+    IR -->|"JSON — Item array"| PAGE
+    IF -->|"HTTP POST /api/items"| IR
+    IR -->|"JSON — new Item row"| IF
+    IL -->|"HTTP PATCH · DELETE /api/items"| IR
+    IR -->|"JSON — updated row"| IL
+    IL -->|"HTTP GET /api/qrcode?data=tag"| QR
+    QR -->|"PNG — QR code image"| IL
     WR -->|"HTTP GET lat · lon · daily fields"| EXT1
     EXT1 -->|"JSON — temps and precipitation"| WR
     QR -->|"HTTP GET data param"| EXT2
