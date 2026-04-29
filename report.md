@@ -80,27 +80,36 @@ _To be added after Vercel deployment._
 
 ```mermaid
 flowchart TD
-    EXT1(["Open-Meteo API\nexternal · no auth required"])
-    EXT2(["QR Server API\nexternal · no auth required"])
+    EXT1(["Open-Meteo API\nexternal · no auth"])
+    EXT2(["QR Server API\nexternal · no auth"])
 
     subgraph T1["Tier 1 — Browser (Client)"]
-        PAGE["dashboard/page.tsx\nWeatherCard · ItemForm · ItemList"]
+        PAGE["dashboard/page.tsx"]
+        COMP["WeatherCard · ItemForm · ItemList"]
     end
 
     subgraph T2["Tier 2 — Application Server (Next.js API Routes)"]
-        WR["/api/weather\nOpen-Meteo proxy"]
-        IR["/api/items\nGET · POST · PATCH · DELETE"]
+        WR["/api/weather\nproxies Open-Meteo"]
+        QR["/api/qrcode\nproxies QR Server"]
+        IR["/api/items\nvalidation + Supabase queries"]
     end
 
     subgraph T3["Tier 3 — Database (Supabase · PostgreSQL)"]
-        DB[("items table")]
+        DB[("items\nid · item_name · team_name\ncategory · status · asset_tag · description")]
     end
 
-    PAGE <-->|"HTTP requests · JSON responses"| WR
-    PAGE <-->|"HTTP requests · JSON responses"| IR
-    PAGE <-->|"asset tag string · PNG image"| EXT2
-    WR <-->|"HTTP GET · JSON forecast"| EXT1
-    IR <-->|"SQL queries · row results"| DB
+    PAGE -->|"HTTP GET /api/weather"| WR
+    PAGE -->|"HTTP GET /api/qrcode?data=tag"| QR
+    PAGE -->|"HTTP GET · POST · PATCH · DELETE /api/items"| IR
+    WR -->|"JSON — WeatherData"| PAGE
+    QR -->|"PNG — QR code image"| PAGE
+    IR -->|"JSON — Item array or single row"| PAGE
+    WR -->|"HTTP GET lat · lon · daily fields"| EXT1
+    EXT1 -->|"JSON — temps and precipitation"| WR
+    QR -->|"HTTP GET data param"| EXT2
+    EXT2 -->|"PNG image"| QR
+    IR -->|"SQL — SELECT · INSERT · UPDATE · DELETE"| DB
+    DB -->|"query results — rows of data"| IR
 ```
 
 ### Design Decision Log

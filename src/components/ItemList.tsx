@@ -178,7 +178,7 @@ export default function ItemList({
                     <div className="flex flex-col items-start gap-1">
                       <span>{item.asset_tag}</span>
                       <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=72x72&data=${encodeURIComponent(item.asset_tag)}&margin=2`}
+                        src={`/api/qrcode?data=${encodeURIComponent(item.asset_tag)}`}
                         alt={`QR code for ${item.asset_tag}`}
                         width={72}
                         height={72}
