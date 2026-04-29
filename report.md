@@ -205,10 +205,48 @@ for (const event of data) {
 
 ## AI Usage Log
 
-_To be completed._
+**Interaction 1: Architecture diagram iterations**
+
+**What you prompted:** The current diagram has low readability, restructure it from top to bottom.
+
+**What it produced:** A revised Mermaid flowchart with three tier subgraphs stacked vertically, labeled arrows between tiers, and external API nodes connected to Tier 2.
+
+**AI assumption:** The AI assumed that switching from a left-to-right layout to a top-to-bottom layout would be sufficient to fix readability, without asking whether the number of nodes inside each tier also needed to be reduced.
+
+**Failure mode:** The AI produced several intermediate versions that were still too complex before arriving at a clean diagram, because it kept adding detail (splitting WeatherCard, ItemForm, and ItemList into separate nodes) rather than simplifying.
+
+**What you would change:** Specify upfront that each tier should contain a single node rather than individual component nodes, so the AI does not add complexity that makes the diagram harder to read.
+
+---
+
+**Interaction 2: QR code integration violated 3-tier architecture**
+
+**What you prompted:** Add a QR code that appears next to the asset tag when an item is marked as labeled.
+
+**What it produced:** An `<img>` tag in ItemList.tsx with a `src` pointing directly to the external QR Server API from the browser.
+
+**AI assumption:** The AI assumed that any fetch or image request could live in the frontend, without considering that the 3-tier architecture requirement places all external API calls at Tier 2.
+
+**Failure mode:** The implementation would have failed the architecture requirement because the browser was calling an external API directly, bypassing the application server entirely.
+
+**What you would change:** Include the architecture constraint in the prompt explicitly: all external API calls must go through a server-side route, not the browser.
+
+---
+
+**Interaction 3: Events app shared navigation with Component B**
+
+**What you prompted:** Component E should be completely separate from Component B, not just a different tab on the same website.
+
+**What it produced:** A Next.js route group restructure that gives each app its own layout, removing the shared navbar so the two apps have independent headers and no cross-links.
+
+**AI assumption:** The AI initially assumed that having the events page at a different URL path was sufficient separation, and added it as a nav link inside Component B without questioning whether they should share navigation at all.
+
+**Failure mode:** The events page looked like a feature of the return tracker rather than a standalone app, which would have misrepresented the scope of Component E as an independent deliverable.
+
+**What you would change:** State at the start of Component E that it is a fully independent app with its own layout and no shared navigation with Component B.
 
 ---
 
 ## Reflection
 
-_To be completed._
+Moving from Streamlit to Next.js required understanding a boundary that Streamlit hides entirely: the split between what runs in the browser and what runs on the server. In Streamlit, one Python file handles everything, so there is no mental model of client versus server to maintain; in Next.js, every component, route, and API call has a tier it belongs to, and putting something in the wrong tier causes real failures. Reading AI-generated TypeScript was harder than reading AI-generated Python at first because the type annotations and import structure add more surface area to parse, but once the file structure was familiar the explicit types actually made it easier to follow data from the API route into the component. The system map revealed something the interview alone did not make visible: Maason's pain is not just that each step is slow, but that the four steps have no system connecting them, so every return day requires the same full sequence of manual transitions with no state carried over from one tool to the next. Compared to a JTBD statement, the system map captured more nuance because it showed where the handoffs actually break down rather than just what outcome Maason wants. Streamlit is the right tool when one person needs to quickly explore or present data, for example a data scientist showing weekly sensor readings to a small team; Next.js with Supabase is the right tool when multiple users need to read and write shared data simultaneously, for example the GIX return tracker where two staff members update item status at the same table at the same time.
