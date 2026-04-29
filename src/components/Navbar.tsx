@@ -17,6 +17,9 @@ export default function Navbar() {
           <Link href="/dashboard" className="hover:text-uw-gold transition-colors">
             Dashboard
           </Link>
+          <Link href="/events" className="hover:text-uw-gold transition-colors">
+            Events
+          </Link>
         </div>
       </div>
     </nav>

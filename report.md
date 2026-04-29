@@ -153,7 +153,53 @@ if (!Array.isArray(data)) {
 
 ## Component E: Applied Challenge
 
-_To be completed._
+### What Was Built
+
+A browsable events page at `/events` that reads from the `events` Supabase table and lets staff filter by category. The page is built with Next.js App Router and fetches data through a server-side API route (`/api/events`) so the Supabase key is never exposed to the browser.
+
+Live at: https://510-lab.vercel.app/events
+
+### System Architecture Map
+
+_[Hand-drawn system architecture map to be added — image shows: Browser → HTTP GET /api/events → Next.js API route → SQL SELECT from Supabase events table, with data formats and one potential error labeled at each boundary]_
+
+### Part 3: Testing and Validation
+
+#### Assert Statements (events + Supabase pipeline)
+
+Both asserts live in `src/app/api/events/route.ts`:
+
+```ts
+// Assert 1: Supabase must return an array
+if (!Array.isArray(data)) {
+  return NextResponse.json(
+    { error: "Unexpected data format from database" },
+    { status: 500 }
+  );
+}
+
+// Assert 2: each event has required fields (id, title, category, date)
+for (const event of data) {
+  if (!event.id || !event.title || !event.category || !event.date) {
+    return NextResponse.json(
+      { error: "Event record missing required fields" },
+      { status: 500 }
+    );
+  }
+}
+```
+
+#### Error Scenario Tests
+
+| # | What I Did | Expected | Actual |
+|---|-----------|----------|--------|
+| 1 | Loaded `/events` with no matching events for a category (empty table state) | Page shows "No events found in the X category" empty state instead of crashing | Pass — empty state message renders correctly |
+| 2 | Called `/api/events?category=invalid_value` with a category not in the allowed list | Route ignores the unrecognized value and returns all events (no crash, no 400) | Pass — `VALID_CATEGORIES` guard silently ignores unknown values and falls back to returning all events |
+| 3 | Simulated a Supabase connection failure by temporarily replacing the anon key with a wrong value | `/api/events` returns 500 with `{ "error": "..." }`; events page shows red error banner | Pass — `if (error)` check on Supabase result surfaces the error as a user-visible message |
+
+#### Security Check
+
+Supabase URL and anon key are stored in `.env.local` only and referenced via `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`. The file is listed in `.gitignore` and is not committed to the repository. The `/api/events` route runs server-side so the key is never sent to the browser.
 
 ---
 
