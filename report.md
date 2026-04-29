@@ -31,11 +31,11 @@ I think the core pain is not just that the process is slow, but that it requires
 
 ### Tech Stack Justification
 
-I chose Next.js with Supabase because the return workflow involves two staff members (Maason and Kevin) working at the same table and both need to read and write item records at the same time, which requires data to persist across sessions and users rather than staying local to one machine.
+I chose Next.js with Supabase because the return workflow involves more then one staff member (Maason and Kevin or more) working at the same table and both need to read and write item records at the same time, which requires data to persist across sessions and users rather than staying local to one machine.
 
-### Supabase Schema
+### Supabase Schema Report 
 
-Two tables were created in Supabase with RLS disabled.
+One table was created in Supabase with RLS disabled for Component B.
 
 **items** — tracks each piece of equipment being returned
 
@@ -48,19 +48,6 @@ Two tables were created in Supabase with RLS disabled.
 | category | text | it | No |
 | status | text | pending | No |
 | asset_tag | text | | Yes |
-| description | text | | Yes |
-
-**events** — stores GIX events for the Component E browser
-
-| Column | Type | Default | Nullable |
-|--------|------|---------|----------|
-| id | int8 | auto | No |
-| created_at | timestamptz | now() | No |
-| title | text | | No |
-| category | text | | No |
-| date | date | | No |
-| time | text | | Yes |
-| location | text | | Yes |
 | description | text | | Yes |
 
 ### Responsive Design Summary

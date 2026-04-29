@@ -10,13 +10,12 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-uw-purple:       #4b2e83;
+  --color-uw-purple-dark:  #3a2266;
+  --color-uw-purple-light: #ede9f5;
+  --color-uw-gold:         #b7a57a;
+  --color-uw-gold-light:   #f5f0e8;
 }
 
 body {

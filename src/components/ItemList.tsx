@@ -10,9 +10,9 @@ const statusColors: Record<ItemStatus, string> = {
 };
 
 const categoryColors: Record<string, string> = {
-  it: "bg-purple-100 text-purple-800",
-  makerspace: "bg-teal-100 text-teal-800",
-  discard: "bg-gray-100 text-gray-600",
+  it: "bg-uw-purple-light text-uw-purple",
+  makerspace: "bg-uw-gold-light text-amber-800",
+  discard: "bg-gray-100 text-gray-500",
 };
 
 function nextStatus(status: ItemStatus): ItemStatus | null {
@@ -111,12 +111,12 @@ export default function ItemList({
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-        <h2 className="text-base font-semibold text-gray-800">
+    <div className="bg-white border border-uw-purple-light rounded-lg overflow-hidden shadow-sm">
+      <div className="bg-uw-purple px-4 py-2 flex items-center justify-between">
+        <h2 className="text-xs font-semibold text-white uppercase tracking-wider">
           Returned Items
         </h2>
-        <span className="text-xs text-gray-400">{items.length} item{items.length !== 1 ? "s" : ""}</span>
+        <span className="text-xs text-white/70">{items.length} item{items.length !== 1 ? "s" : ""}</span>
       </div>
       {error && (
         <div className="px-4 py-2 bg-red-50 text-red-700 text-sm border-b border-red-100">
@@ -174,6 +174,17 @@ export default function ItemList({
                       }
                       className="border border-gray-300 rounded px-2 py-1 w-28 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
+                  ) : item.status === "labeled" && item.asset_tag ? (
+                    <div className="flex flex-col items-start gap-1">
+                      <span>{item.asset_tag}</span>
+                      <img
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=72x72&data=${encodeURIComponent(item.asset_tag)}&margin=2`}
+                        alt={`QR code for ${item.asset_tag}`}
+                        width={72}
+                        height={72}
+                        className="rounded"
+                      />
+                    </div>
                   ) : (
                     item.asset_tag ?? "—"
                   )}
@@ -184,7 +195,7 @@ export default function ItemList({
                       <button
                         onClick={() => handleStatusAdvance(item)}
                         disabled={loadingId === item.id}
-                        className="text-xs text-blue-600 hover:text-blue-800 font-medium disabled:opacity-40 whitespace-nowrap"
+                        className="text-xs text-uw-purple hover:text-uw-purple-dark font-medium disabled:opacity-40 whitespace-nowrap"
                       >
                         {loadingId === item.id ? "..." : nextLabel(item.status)}
                       </button>
@@ -192,7 +203,7 @@ export default function ItemList({
                     <button
                       onClick={() => handleDelete(item.id)}
                       disabled={loadingId === item.id}
-                      className="text-xs text-red-500 hover:text-red-700 disabled:opacity-40"
+                      className="text-xs text-gray-400 hover:text-red-600 disabled:opacity-40"
                     >
                       Delete
                     </button>

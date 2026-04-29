@@ -2,27 +2,26 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-      <h1 className="text-3xl font-bold text-gray-900 mb-4">
-        GIX Return Tracker
-      </h1>
-      <p className="text-gray-500 text-lg mb-10 leading-relaxed">
-        A tool for GIX IT staff to manage equipment returned by student teams
-        after poster sessions and live demos.
-      </p>
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Link
-          href="/dashboard"
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
-        >
-          Open Dashboard
-        </Link>
-        <Link
-          href="/events"
-          className="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm"
-        >
-          Browse Events
-        </Link>
+    <div className="min-h-[calc(100vh-48px)] flex items-center justify-center bg-uw-purple-light">
+      <div className="max-w-2xl mx-auto px-6 py-20 text-center">
+        <div className="inline-block bg-uw-purple text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest mb-6">
+          GIX IT Department
+        </div>
+        <h1 className="text-4xl font-bold text-uw-purple mb-4">
+          Equipment Return Tracker
+        </h1>
+        <p className="text-gray-600 text-lg mb-10 leading-relaxed">
+          Streamline the annual equipment return process for GIX IT staff.
+          Track items, assign asset tags, and manage return status in one place.
+        </p>
+        <div className="flex justify-center">
+          <Link
+            href="/dashboard"
+            className="bg-uw-purple text-white px-7 py-3 rounded-lg font-medium hover:bg-uw-purple-dark transition-colors text-sm"
+          >
+            Open Dashboard
+          </Link>
+        </div>
       </div>
     </div>
   );
