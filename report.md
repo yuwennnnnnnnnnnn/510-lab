@@ -191,13 +191,15 @@ for (const event of data) {
 
 | # | What I Did | Expected | Actual |
 |---|-----------|----------|--------|
-| 1 | Loaded `/events` with no matching events for a category (empty table state) | Page shows "No events found in the X category" empty state instead of crashing | Pass — empty state message renders correctly |
-| 2 | Called `/api/events?category=invalid_value` with a category not in the allowed list | Route ignores the unrecognized value and returns all events (no crash, no 400) | Pass — `VALID_CATEGORIES` guard silently ignores unknown values and falls back to returning all events |
-| 3 | Simulated a Supabase connection failure by temporarily replacing the anon key with a wrong value | `/api/events` returns 500 with `{ "error": "..." }`; events page shows red error banner | Pass — `if (error)` check on Supabase result surfaces the error as a user-visible message |
+| 1 | Loaded `/events` with no matching events for a category (empty table state) | Page shows "No events found in the X category" empty state instead of crashing | Pass : empty state message renders correctly |
+| 2 | Called `/api/events?category=invalid_value` with a category not in the allowed list | Route ignores the unrecognized value and returns all events (no crash, no 400) | Pass : `VALID_CATEGORIES` guard silently ignores unknown values and falls back to returning all events |
+| 3 | Simulated a Supabase connection failure by temporarily replacing the anon key with a wrong value | `/api/events` returns 500 with `{ "error": "..." }`; events page shows red error banner | Pass : `if (error)` check on Supabase result surfaces the error as a user-visible message |
 
-#### Security Check
+#### Security Checklist
 
-Supabase URL and anon key are stored in `.env.local` only and referenced via `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`. The file is listed in `.gitignore` and is not committed to the repository. The `/api/events` route runs server-side so the key is never sent to the browser.
+- [x] No hardcoded secrets in source files — Supabase URL and anon key are stored in `.env.local` only
+- [x] `.env.local` is listed in `.gitignore` — confirmed not tracked by git
+- [x] Error handling on every API call and database operation — all fetch calls use try/catch with user-visible error messages; all Supabase queries check for `error` before using `data`
 
 ---
 
