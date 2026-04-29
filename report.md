@@ -64,7 +64,7 @@ The most critical issue was the items table overflowing at phone width. I fixed 
 
 ### Deployment URL
 
-_To be added after Vercel deployment._
+https://510-lab.vercel.app — deployed on Vercel, no secrets exposed in source files.
 
 ### Security Checklist
 
