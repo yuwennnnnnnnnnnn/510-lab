@@ -97,7 +97,39 @@ https://510-lab.vercel.app
 
 ## Component D: Testing and Validation
 
-_To be completed._
+### Assert-Style Checks
+
+The app validates external API responses and database results at the server boundary before returning data to the client. All checks live in the API route handlers so errors surface as structured JSON rather than crashing the server.
+
+**`/api/weather` — Open-Meteo response validation** (`src/app/api/weather/route.ts`)
+
+| Check | Code location | What it catches |
+|-------|--------------|-----------------|
+| `data.daily` exists and `data.daily.time` is an array | line 25–30 | API schema change — field renamed or removed upstream |
+| `data.daily.temperature_2m_max` and `temperature_2m_min` are arrays | line 33–40 | Missing forecast fields that the WeatherCard component requires |
+
+If either check fails the route returns HTTP 502 with `{ "error": "Unexpected weather data format from Open-Meteo" }` or `{ "error": "Missing temperature fields in weather response" }` so the client shows a user-visible message instead of a blank widget.
+
+**`/api/items` — Supabase query validation** (`src/app/api/items/route.ts`)
+
+| Check | Code location | What it catches |
+|-------|--------------|-----------------|
+| `data` returned by Supabase `.select()` is an array | line 16–21 | Unexpected null or object response from the client library |
+| `item_name` and `team_name` are non-empty strings on POST | line 36–40 | Empty form submission reaching the database |
+| `id` is present on PATCH and DELETE | line 72–74, 102–104 | Malformed requests missing the required primary key |
+
+### Validation in the UI
+
+Beyond server-side checks, `ItemList.tsx` blocks the status advance to `labeled` if the asset tag input is empty (line 45–48), so an eight-digit tag is always written to the database before an item is marked as labeled.
+
+### Manual Test Results
+
+| Scenario | Expected | Actual |
+|----------|----------|--------|
+| Submit form with blank item name | Inline error "item_name and team_name are required" | Pass |
+| Advance item to labeled without entering asset tag | Inline error prompting for tag | Pass |
+| Delete an item | Row removed, list refreshes | Pass |
+| Mark item returned then labeled | Status badge updates through both states | Pass |
 
 ---
 
