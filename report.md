@@ -78,36 +78,7 @@ https://510-lab.vercel.app
 
 ### Architecture Diagram
 
-```mermaid
-flowchart TD
-    subgraph T1["Tier 1 — Browser (Client)"]
-        PAGE["dashboard/page.tsx\nWeatherCard · ItemForm · ItemList"]
-    end
-
-    subgraph T2["Tier 2 — Application Server (Next.js API Routes)"]
-        WR["/api/weather"]
-        QR["/api/qrcode"]
-        IR["/api/items"]
-    end
-
-    subgraph T3["Tier 3 — Database (Supabase · PostgreSQL)"]
-        DB[("items\nid · item_name · team_name\ncategory · status · asset_tag")]
-    end
-
-    EXT1(["Open-Meteo API"])
-    EXT2(["QR Server API"])
-
-    PAGE -->|"HTTP GET"| WR
-    PAGE -->|"HTTP GET"| QR
-    PAGE -->|"HTTP GET · POST · PATCH · DELETE"| IR
-    WR -->|"JSON — WeatherData"| PAGE
-    QR -->|"PNG — QR image"| PAGE
-    IR -->|"JSON — Item array"| PAGE
-    WR <-->|"HTTP · JSON forecast"| EXT1
-    QR <-->|"HTTP · PNG"| EXT2
-    IR -->|"SQL — SELECT · INSERT · UPDATE · DELETE"| DB
-    DB -->|"query results — rows"| IR
-```
+![Architecture Diagram](assets/architecture-diagram.png)
 
 ### Design Decision Log
 
