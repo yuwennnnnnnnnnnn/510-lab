@@ -205,45 +205,45 @@ for (const event of data) {
 
 ## AI Usage Log
 
-**Interaction 1: Architecture diagram iterations**
+**Interaction 1: Building the Supabase items API route**
 
-**What you prompted:** The current diagram has low readability, restructure it from top to bottom.
+**What you prompted:** Build a Next.js API route that connects to Supabase and supports GET, POST, PATCH, and DELETE for an items table with fields item_name, team_name, category, status, asset_tag, and description.
 
-**What it produced:** A revised Mermaid flowchart with three tier subgraphs stacked vertically, labeled arrows between tiers, and external API nodes connected to Tier 2.
+**What it produced:** A complete `/api/items/route.ts` with all four HTTP methods, error handling on every Supabase call, and input validation for required fields on POST.
 
-**AI assumption:** The AI assumed that switching from a left-to-right layout to a top-to-bottom layout would be sufficient to fix readability, without asking whether the number of nodes inside each tier also needed to be reduced.
+**AI assumption:** The AI assumed status values would always be valid strings and did not add validation for the allowed status transitions, so a client could PATCH an item directly to "labeled" without going through "returned" first.
 
-**Failure mode:** The AI produced several intermediate versions that were still too complex before arriving at a clean diagram, because it kept adding detail (splitting WeatherCard, ItemForm, and ItemList into separate nodes) rather than simplifying.
+**Failure mode:** An item could reach the "labeled" state without an asset tag ever being entered, because the API did not enforce the pending → returned → labeled order.
 
-**What you would change:** Specify upfront that each tier should contain a single node rather than individual component nodes, so the AI does not add complexity that makes the diagram harder to read.
+**What you would change:** Specify the allowed status transitions in the prompt so the API enforces the workflow order rather than accepting any status string.
 
 ---
 
-**Interaction 2: QR code integration violated 3-tier architecture**
+**Interaction 2: Adding QR code display for labeled items**
 
-**What you prompted:** Add a QR code that appears next to the asset tag when an item is marked as labeled.
+**What you prompted:** When an item's status is labeled, show a QR code image next to the asset tag in the items table.
 
 **What it produced:** An `<img>` tag in ItemList.tsx with a `src` pointing directly to the external QR Server API from the browser.
 
-**AI assumption:** The AI assumed that any fetch or image request could live in the frontend, without considering that the 3-tier architecture requirement places all external API calls at Tier 2.
+**AI assumption:** The AI assumed any image request could go directly from the browser to an external service, without considering that the 3-tier architecture requires all external API calls to go through the application server.
 
-**Failure mode:** The implementation would have failed the architecture requirement because the browser was calling an external API directly, bypassing the application server entirely.
+**Failure mode:** The browser was calling an external API directly, bypassing Tier 2 entirely and violating the architecture requirement that external services connect only at the server layer.
 
-**What you would change:** Include the architecture constraint in the prompt explicitly: all external API calls must go through a server-side route, not the browser.
+**What you would change:** Include the constraint in the prompt that all external API calls must route through a Next.js server-side route so the AI does not place them in the frontend.
 
 ---
 
-**Interaction 3: Events app shared navigation with Component B**
+**Interaction 3: Building the events page with category filter**
 
-**What you prompted:** Component E should be completely separate from Component B, not just a different tab on the same website.
+**What you prompted:** Build a browsable events page that reads from a Supabase events table and shows a category filter for lecture, workshop, career, and social.
 
-**What it produced:** A Next.js route group restructure that gives each app its own layout, removing the shared navbar so the two apps have independent headers and no cross-links.
+**What it produced:** An `events/page.tsx` with a CategoryFilter component and EventCard grid, a `/api/events` route with optional category query param, and an Events link added to the shared navbar.
 
-**AI assumption:** The AI initially assumed that having the events page at a different URL path was sufficient separation, and added it as a nav link inside Component B without questioning whether they should share navigation at all.
+**AI assumption:** The AI assumed the events page should share the same layout and navigation as the equipment return tracker, since both apps live in the same Next.js project.
 
-**Failure mode:** The events page looked like a feature of the return tracker rather than a standalone app, which would have misrepresented the scope of Component E as an independent deliverable.
+**Failure mode:** The two apps appeared as one integrated product rather than two separate deliverables, which did not match the lab requirement for Component E to be an independent app.
 
-**What you would change:** State at the start of Component E that it is a fully independent app with its own layout and no shared navigation with Component B.
+**What you would change:** Specify in the prompt that the events app must have its own independent layout and no shared navigation with Component B, so the AI does not treat them as one app from the start.
 
 ---
 
