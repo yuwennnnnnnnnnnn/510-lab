@@ -153,18 +153,11 @@ if (!Array.isArray(data)) {
 
 ## Component E: Applied Challenge
 
-### What Was Built
-
-A standalone events browser at `https://510-lab.vercel.app/events` — a separate app from the Component B equipment return tracker (`https://510-lab.vercel.app/dashboard`). The two apps share the same Next.js repo but have independent layouts and no shared navigation. The events app reads from the `events` Supabase table, displays events in a card grid, and lets users filter by category. Data is fetched through a server-side API route (`/api/events`) so the Supabase key is never exposed to the browser.
-
-| App | URL | Purpose |
-|-----|-----|---------|
-| Component B | https://510-lab.vercel.app/dashboard | Equipment return tracker for GIX IT staff |
-| Component E | https://510-lab.vercel.app/events | GIX events browser with category filter |
+Live at: https://510-lab.vercel.app/events
 
 ### System Architecture Map
 
-_[Hand-drawn system architecture map to be added — image shows: Browser → HTTP GET /api/events → Next.js API route → SQL SELECT from Supabase events table, with data formats and one potential error labeled at each boundary]_
+![Component E Architecture](assets/component-e-architecture.png)
 
 ### Part 3: Testing and Validation
 
