@@ -80,9 +80,6 @@ _To be added after Vercel deployment._
 
 ```mermaid
 flowchart TD
-    EXT1(["Open-Meteo API\nexternal · no auth"])
-    EXT2(["QR Server API\nexternal · no auth"])
-
     subgraph T1["Tier 1 — Browser (Client)"]
         PAGE["dashboard/page.tsx"]
         COMP["WeatherCard · ItemForm · ItemList"]
@@ -97,6 +94,9 @@ flowchart TD
     subgraph T3["Tier 3 — Database (Supabase · PostgreSQL)"]
         DB[("items\nid · item_name · team_name\ncategory · status · asset_tag · description")]
     end
+
+    EXT1(["Open-Meteo API\nexternal · no auth"])
+    EXT2(["QR Server API\nexternal · no auth"])
 
     PAGE -->|"HTTP GET /api/weather"| WR
     PAGE -->|"HTTP GET /api/qrcode?data=tag"| QR
