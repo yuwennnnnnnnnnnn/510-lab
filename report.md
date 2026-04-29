@@ -97,39 +97,57 @@ https://510-lab.vercel.app
 
 ## Component D: Testing and Validation
 
-### Assert-Style Checks
+### D.1 API Contract Test Results
 
-The app validates external API responses and database results at the server boundary before returning data to the client. All checks live in the API route handlers so errors surface as structured JSON rather than crashing the server.
+| # | Test Case | Input Description | Expected Outcome | Actual Outcome | Status Code | Pass/Fail |
+|---|-----------|-------------------|-----------------|----------------|-------------|-----------|
+| 1 | Valid input | Open-Meteo forecast request with latitude 47.65, longitude -122.30, daily temperature fields, 7-day forecast | 200 OK, JSON with `daily` object containing `time`, `temperature_2m_max`, `temperature_2m_min` arrays | 200 OK, received full 7-day forecast JSON with all expected fields | 200 | Pass |
+| 2 | Invalid input | Open-Meteo request with latitude 999 (out of valid range) | 400 Bad Request with error message about invalid latitude | 400, `{"reason":"Latitude must be in range of -90 to 90°. Given: 999.0.","error":true}` | 400 | Pass |
+| 3 | Missing/wrong auth | Supabase REST request with an incorrect anon key in the `apikey` and `Authorization` headers | 401 Unauthorized with error message | 401, `{"message":"Invalid API key","hint":"Double check your Supabase anon or service_role API key."}` | 401 | Pass |
 
-**`/api/weather` — Open-Meteo response validation** (`src/app/api/weather/route.ts`)
+### External API Assert Statements
 
-| Check | Code location | What it catches |
-|-------|--------------|-----------------|
-| `data.daily` exists and `data.daily.time` is an array | line 25–30 | API schema change — field renamed or removed upstream |
-| `data.daily.temperature_2m_max` and `temperature_2m_min` are arrays | line 33–40 | Missing forecast fields that the WeatherCard component requires |
+The assert-style checks in `src/app/api/weather/route.ts` guard the app against Open-Meteo schema changes:
 
-If either check fails the route returns HTTP 502 with `{ "error": "Unexpected weather data format from Open-Meteo" }` or `{ "error": "Missing temperature fields in weather response" }` so the client shows a user-visible message instead of a blank widget.
+```ts
+// Assert: response must contain "daily" with an array of dates
+if (!data.daily || !Array.isArray(data.daily.time)) {
+  return NextResponse.json(
+    { error: "Unexpected weather data format from Open-Meteo" },
+    { status: 502 }
+  );
+}
 
-**`/api/items` — Supabase query validation** (`src/app/api/items/route.ts`)
+// Assert: required forecast arrays must be present
+if (
+  !Array.isArray(data.daily.temperature_2m_max) ||
+  !Array.isArray(data.daily.temperature_2m_min)
+) {
+  return NextResponse.json(
+    { error: "Missing temperature fields in weather response" },
+    { status: 502 }
+  );
+}
+```
 
-| Check | Code location | What it catches |
-|-------|--------------|-----------------|
-| `data` returned by Supabase `.select()` is an array | line 16–21 | Unexpected null or object response from the client library |
-| `item_name` and `team_name` are non-empty strings on POST | line 36–40 | Empty form submission reaching the database |
-| `id` is present on PATCH and DELETE | line 72–74, 102–104 | Malformed requests missing the required primary key |
+The Supabase items route (`src/app/api/items/route.ts`) asserts that the query result is an array before returning it to the client:
 
-### Validation in the UI
+```ts
+if (!Array.isArray(data)) {
+  return NextResponse.json(
+    { error: "Unexpected data format from database" },
+    { status: 500 }
+  );
+}
+```
 
-Beyond server-side checks, `ItemList.tsx` blocks the status advance to `labeled` if the asset tag input is empty (line 45–48), so an eight-digit tag is always written to the database before an item is marked as labeled.
+### Error-Handling Note
 
-### Manual Test Results
+**Scenario 1 — Valid input:** Handled correctly. The happy path works end to end and the WeatherCard renders the 7-day forecast without error.
 
-| Scenario | Expected | Actual |
-|----------|----------|--------|
-| Submit form with blank item name | Inline error "item_name and team_name are required" | Pass |
-| Advance item to labeled without entering asset tag | Inline error prompting for tag | Pass |
-| Delete an item | Row removed, list refreshes | Pass |
-| Mark item returned then labeled | Status badge updates through both states | Pass |
+**Scenario 2 — Invalid input (latitude 999):** Open-Meteo returns 400 and the `/api/weather` route propagates the error as HTTP 502 with `{ "error": "Weather service unavailable" }`. The dashboard shows a user-visible error message rather than crashing. No gap found.
+
+**Scenario 3 — Missing/wrong auth:** Supabase returns 401 when the anon key is invalid. The Supabase client library surfaces this as an `error` object on the query result. The `/api/items` route checks `if (error)` on every Supabase call and returns HTTP 500 with the error message. The dashboard shows the error inline. No gap found.
 
 ---
 
