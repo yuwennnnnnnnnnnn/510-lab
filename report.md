@@ -97,7 +97,7 @@ https://510-lab.vercel.app
 
 ## Component D: Testing and Validation
 
-### D.1 API Contract Test Results
+### Validation Results
 
 | # | Test Case | Input Description | Expected Outcome | Actual Outcome | Status Code | Pass/Fail |
 |---|-----------|-------------------|-----------------|----------------|-------------|-----------|
