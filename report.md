@@ -81,8 +81,7 @@ _To be added after Vercel deployment._
 ```mermaid
 flowchart TD
     subgraph T1["Tier 1 — Browser (Client)"]
-        PAGE["dashboard/page.tsx"]
-        COMP["WeatherCard · ItemForm · ItemList"]
+        PAGE["dashboard/page.tsx\nWeatherCard · ItemForm · ItemList"]
     end
 
     subgraph T2["Tier 2 — Application Server (Next.js API Routes)"]
