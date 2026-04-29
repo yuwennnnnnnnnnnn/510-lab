@@ -29,7 +29,58 @@ I think the core pain is not just that the process is slow, but that it requires
 
 ## Component B: Lab
 
-_To be completed._
+### Tech Stack Justification
+
+I chose Next.js with Supabase because the return workflow involves two staff members (Maason and Kevin) working at the same table and both need to read and write item records at the same time, which requires data to persist across sessions and users rather than staying local to one machine.
+
+### Supabase Schema
+
+Two tables were created in Supabase with RLS disabled.
+
+**items** — tracks each piece of equipment being returned
+
+| Column | Type | Default | Nullable |
+|--------|------|---------|----------|
+| id | int8 | auto | No |
+| created_at | timestamptz | now() | No |
+| item_name | text | | No |
+| team_name | text | | No |
+| category | text | it | No |
+| status | text | pending | No |
+| asset_tag | text | | Yes |
+| description | text | | Yes |
+
+**events** — stores GIX events for the Component E browser
+
+| Column | Type | Default | Nullable |
+|--------|------|---------|----------|
+| id | int8 | auto | No |
+| created_at | timestamptz | now() | No |
+| title | text | | No |
+| category | text | | No |
+| date | date | | No |
+| time | text | | Yes |
+| location | text | | Yes |
+| description | text | | Yes |
+
+### Responsive Design Summary
+
+I tested the app at iPhone 14 Pro width using Chrome DevTools.
+
+| Element | Works at Phone Width? | What Breaks? |
+|---------|----------------------|--------------|
+| Page title | Yes | |
+| Navigation | Yes | |
+| Forms | Yes | |
+| Tables | No | Item table overflows horizontally, columns get cut off |
+| Buttons | Yes | |
+| Text | Yes | |
+
+The most critical issue was the items table overflowing at phone width. I fixed it by wrapping the table in a div with `overflow-x-auto`, which allows horizontal scrolling instead of clipping the content.
+
+### Deployment URL
+
+_To be added after Vercel deployment._
 
 ---
 
