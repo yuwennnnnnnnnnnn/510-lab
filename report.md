@@ -87,9 +87,9 @@ https://510-lab.vercel.app
 
 | Field | Entry |
 |-------|-------|
-| Decision | I used a single `status` text column with three values (pending, returned, labeled) to track each item through the return workflow instead of using separate boolean columns or a separate status table. |
-| Alternatives considered | Three separate boolean columns (`is_returned`, `is_labeled`, `is_discarded`), or a separate status history table that logs every transition with a timestamp. |
-| Why I chose this | The return workflow is strictly linear — an item always goes pending then returned then labeled, never skips a step or goes backward. A single ordered status column matches that reality and keeps queries simple. |
+| Decision | I used a single "status" text column with three values (pending, returned, labeled) to track each item through the return workflow instead of using separate boolean columns or a separate status table. |
+| Alternatives considered | Three separate boolean columns ("is_returned:, "is_labeled", "is_discarded"), or a separate status history table that logs every transition with a timestamp. |
+| Why I chose this | The return workflow is strictly linear: an item always goes pending then returned then labeled, never skips a step or goes backward. A single ordered status column matches that reality and keeps queries simple. |
 | Trade-off | I gave up a full audit trail. If Maason wants to know when exactly an item was marked returned, there is no timestamp for that transition. A status history table would capture that but adds complexity that is not needed for this use case. |
 | When would I choose differently | If the workflow allowed items to go backward (e.g., an item marked returned could be sent back to pending after a dispute), a status history table would be the right choice. |
 
