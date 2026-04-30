@@ -235,15 +235,15 @@ for (const event of data) {
 
 **Prompt 3:**
 
-> "Build a browsable events page that reads from a Supabase events table and shows a category filter for lecture, workshop, career, and social."
+> "Build an item list where each row shows the current status and a button to advance it to the next state. Require the user to enter an asset tag before an item can be marked as labeled."
 
-**What it produced:** A working `events/page.tsx` with a CategoryFilter, an EventCard grid, a `/api/events` route with an optional category query param, and an Events link dropped into the shared navbar alongside the dashboard.
+**What it produced:** `ItemList.tsx` with color-coded status badges, advance buttons that change label based on the current state, and an inline text input that appears inside the table row when an item is in the returned state.
 
-**AI assumption:** It assumed the events page was just another section of the same app and added it to the existing navigation without asking. Since both live in the same Next.js project, that seemed like the obvious move.
+**AI assumption:** It assumed the asset tag input should live directly inside the table row rather than in a modal or separate form. That seemed like the simplest approach and it never asked about screen size.
 
-**Failure mode:** A student browsing events would see the return tracker in the navigation and could end up on a staff-only workflow page that has nothing to do with them, which makes the app confusing for the wrong audience.
+**Failure mode:** On a narrow screen the inline input pushes the asset tag column wider and makes the row hard to read, on top of a table that already needs horizontal scrolling on mobile.
 
-**What I would change:** I would say in the prompt that this app needs its own independent layout and header with no shared navigation, so the AI does not connect them from the start.
+**What I would change:** I would mention in the prompt that the table needs to stay readable on phone width, so the AI considers a modal or a drawer for the asset tag input rather than expanding an already crowded row.
 
 ---
 
