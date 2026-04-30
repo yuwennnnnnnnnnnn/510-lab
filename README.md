@@ -33,33 +33,6 @@ A standalone events page where students can browse upcoming GIX lectures, worksh
 
 ---
 
-## How to run locally
-
-**1. Install dependencies**
-```bash
-npm install
-```
-
-**2. Set up environment variables**
-
-Create a `.env.local` file in the root with your Supabase credentials:
-```
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-```
-
-**3. Start the dev server**
-```bash
-npm run dev
-```
-
-Then open:
-- http://localhost:3000 — landing page
-- http://localhost:3000/dashboard — equipment return tracker
-- http://localhost:3000/events — events browser
-
----
-
 ## Supabase tables
 
 **`items`** — tracks equipment return workflow
