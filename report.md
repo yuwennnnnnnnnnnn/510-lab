@@ -161,7 +161,7 @@ Live at: https://510-lab.vercel.app/events
 
 ![Component E Architecture](assets/component-e-architecture.png)
 
-### Part 3: Testing write-up
+### Testing write-up
 
 #### Assert Statements (events + Supabase pipeline)
 
