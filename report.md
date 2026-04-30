@@ -1,4 +1,4 @@
-# TECHIN 510 Week 5 Lab Report
+# TECHIN 510 Lab 5 Report
 
 ---
 
