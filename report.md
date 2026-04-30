@@ -241,7 +241,7 @@ for (const event of data) {
 
 **AI assumption:** It assumed the events page was just another section of the same app and added it to the existing navigation without asking. Since both live in the same Next.js project, that seemed like the obvious move.
 
-**Failure mode:** The two apps looked like one integrated product, which did not match the lab requirement for Component E to be a standalone deliverable separate from Component B.
+**Failure mode:** A student browsing events would see the return tracker in the navigation and could end up on a staff-only workflow page that has nothing to do with them, which makes the app confusing for the wrong audience.
 
 **What I would change:** I would say in the prompt that this app needs its own independent layout and header with no shared navigation, so the AI does not connect them from the start.
 
